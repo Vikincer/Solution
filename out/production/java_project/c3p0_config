@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<c3p0-config>
+    <!-- ComboPooledDataSource ds = new ComboPooledDataSource();  这么写表示使用默认的数据源  -->
+    <default-config>    <!-- 默认数据源  -->
+        <property name="driverClass">com.mysql.cj.jdbc.Driver</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/vimusic</property>
+        <property name="user">root</property>
+        <property name="password">root</property>
+
+        <property name="acquireIncrement">5</property>
+        <property name="initialPoolSize">10</property>
+        <property name="minPoolSize">5</property>
+        <property name="maxPoolSize">20</property> <!-- intergalactoApp采用不同的方法来配置语句缓存 -->
+
+        <property name="maxStatements">0</property>
+        <property name="maxStatementsPerConnection">5</property> <!-- 很重要 但只有一个 -->
+    </default-config>
+
+    <!-- 可以写多套 -->
+    <!-- ComboPooledDataSource ds = new ComboPooledDataSource("mysql");  这么写表示使用下面的数据源  -->
+    <named-config name="mysql">
+        <property name="driverClass">com.mysql.cj.jdbc.Driver</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/vimusic</property>
+        <property name="user">root</property>
+        <property name="password">root</property>
+
+        <property name="acquireIncrement">5</property>
+        <property name="initialPoolSize">10</property>
+        <property name="minPoolSize">5</property>
+        <property name="maxPoolSize">20</property> <!-- intergalactoApp adopts a different approach to configuring statement
+			caching -->
+        <property name="maxStatements">0</property>
+        <property name="maxStatementsPerConnection">5</property> <!-- he's important, but there's only one of him -->
+    </named-config>
+</c3p0-config>
