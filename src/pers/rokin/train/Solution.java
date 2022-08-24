@@ -59,8 +59,10 @@ class Solution {
 //        arraySign(iarraySign);
 
         int [] imaxProfit = {2,4,1};
-        maxProfit(imaxProfit);
+//        maxProfit(imaxProfit);
 
+        int [][] imaximumWealth = {{1,2,3},{3,2,1}};
+        maximumWealth(imaximumWealth);
 
 
     }
@@ -495,6 +497,40 @@ class Solution {
         }
         return true;
     }
+/*给你一个正整数数组arr，请你计算所有可能的奇数长度子数组的和。
+子数组 定义为原数组中的一个连续子序列。
+请你返回 arr中 所有奇数长度子数组的和 。*/
+    public int sumOddLengthSubarrays(int[] arr) {
+        int result = Arrays.stream(arr).sum();
+        if(arr.length <= 2){
+            return result;
+        }
 
+        int sum = 0;
+        int n = arr.length;
+        for (int start = 0; start < n; start++) {
+            for (int length = 1; start + length <= n; length += 2) {
+                int end = start + length - 1;
+                for (int i = start; i <= end; i++) {
+                    sum += arr[i];
+                }
+            }
+        }
+        return sum;
 
+    }
+    /*给你一个 m x n 的整数网格 accounts ，其中 accounts[i][j] 是第 i位客户在第 j 家银行托管的资产数量。返回最富有客户所拥有的 资产总量 。
+客户的 资产总量 就是他们在各家银行托管的资产数量之和。最富有客户就是 资产总量 最大的客户。*/
+    public static int maximumWealth(int[][] accounts) {
+        int [] sum = new int [accounts.length];
+        for (int i = 0; i<accounts.length; i++){
+            int temp = 0;
+            for (int j = 0; j<accounts[i].length; j++){
+                temp += accounts[i][j];
+            }
+            sum[i] = temp;
+        }
+        Arrays.sort(sum);
+        return sum[sum.length-1];
+    }
 }
