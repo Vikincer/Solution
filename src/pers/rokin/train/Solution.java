@@ -1,8 +1,6 @@
 package pers.rokin.train;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.IntStream;
 
 class Solution {
@@ -62,9 +60,18 @@ class Solution {
 //        maxProfit(imaxProfit);
 
         int [][] imaximumWealth = {{1,2,3},{3,2,1}};
-        maximumWealth(imaximumWealth);
+//        maximumWealth(imaximumWealth);
 
+        int [][] iorangesRotting = {{2,1,1},{1,1,0},{0,1,1}};
+//        orangesRotting(iorangesRotting);
 
+        char [][] inumIslands = {{'1','1','1','1','0'},{'1','1','0','1','0'},{'1','1','0','0','0'},{'0','0','0','0','0'}};
+//        numIslands(inumIslands);
+
+        int [][] idiagonalSum = {{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}};
+//        diagonalSum(idiagonalSum);
+        int [][] imatrixReshape = {{1,2},{3,4}};
+        matrixReshape(imatrixReshape,2,4);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -532,5 +539,177 @@ class Solution {
         }
         Arrays.sort(sum);
         return sum[sum.length-1];
+    }
+
+    /*给定一个由 0 和 1 组成的矩阵 mat，请输出一个大小相同的矩阵，其中每一个格子是 mat 中对应位置元素到最近的 0 的距离。
+两个相邻元素间的距离为 1 。*/
+    static int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    public int[][] updateMatrix(int[][] matrix) {
+        int m = matrix.length, n = matrix[0].length;
+        int[][] dist = new int[m][n];
+        boolean[][] seen = new boolean[m][n];
+        Queue<int[]> queue = new LinkedList<int[]>();
+        // 将所有的 0 添加进初始队列中
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (matrix[i][j] == 0) {
+                    queue.offer(new int[]{i, j});
+                    seen[i][j] = true;
+                }
+            }
+        }
+
+        // 广度优先搜索
+        while (!queue.isEmpty()) {
+            int[] cell = queue.poll();
+            int i = cell[0], j = cell[1];
+            for (int d = 0; d < 4; ++d) {
+                int ni = i + dirs[d][0];
+                int nj = j + dirs[d][1];
+                if (ni >= 0 && ni < m && nj >= 0 && nj < n && !seen[ni][nj]) {
+                    dist[ni][nj] = dist[i][j] + 1;
+                    queue.offer(new int[]{ni, nj});
+                    seen[ni][nj] = true;
+                }
+            }
+        }
+
+        return dist;
+    }
+    /*在给定的m x n网格grid中，每个单元格可以有以下三个值之一：
+值0代表空单元格；
+值1代表新鲜橘子；
+值2代表腐烂的橘子。
+每分钟，腐烂的橘子周围4 个方向上相邻 的新鲜橘子都会腐烂。
+返回 直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回-1。*/
+    public static int orangesRotting(int[][] grid) {
+        int M = grid.length;
+        int N = grid[0].length;
+        Queue<int[]> queue = new LinkedList<>();
+
+        int count = 0; // count 表示新鲜橘子的数量
+        for (int r = 0; r < M; r++) {
+            for (int c = 0; c < N; c++) {
+                if (grid[r][c] == 1) {
+                    count++;
+                } else if (grid[r][c] == 2) {
+                    queue.add(new int[]{r, c});
+                }
+            }
+        }
+
+        int round = 0; // round 表示腐烂的轮数，或者分钟数
+        while (count > 0 && !queue.isEmpty()) {
+            round++;
+            int n = queue.size();
+            for (int i = 0; i < n; i++) {
+                int[] orange = queue.poll();
+                int r = orange[0];
+                int c = orange[1];
+                if (r-1 >= 0 && grid[r-1][c] == 1) {
+                    grid[r-1][c] = 2;
+                    count--;
+                    queue.add(new int[]{r-1, c});
+                }
+                if (r+1 < M && grid[r+1][c] == 1) {
+                    grid[r+1][c] = 2;
+                    count--;
+                    queue.add(new int[]{r+1, c});
+                }
+                if (c-1 >= 0 && grid[r][c-1] == 1) {
+                    grid[r][c-1] = 2;
+                    count--;
+                    queue.add(new int[]{r, c-1});
+                }
+                if (c+1 < N && grid[r][c+1] == 1) {
+                    grid[r][c+1] = 2;
+                    count--;
+                    queue.add(new int[]{r, c+1});
+                }
+            }
+        }
+
+        if (count > 0) {
+            return -1;
+        } else {
+            return round;
+        }
+    }
+    /*给你一个由'1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+此外，你可以假设该网格的四条边均被水包围。*/
+    static void dfs(char[][] grid, int r, int c) {
+        int nr = grid.length;
+        int nc = grid[0].length;
+
+        if (r < 0 || c < 0 || r >= nr || c >= nc || grid[r][c] == '0') {
+            return;
+        }
+
+        grid[r][c] = '0';
+        dfs(grid, r - 1, c);
+        dfs(grid, r + 1, c);
+        dfs(grid, r, c - 1);
+        dfs(grid, r, c + 1);
+    }
+
+    public static int numIslands(char[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+
+        int nr = grid.length;
+        int nc = grid[0].length;
+        int num_islands = 0;
+        for (int r = 0; r < nr; ++r) {
+            for (int c = 0; c < nc; ++c) {
+                if (grid[r][c] == '1') {
+                    ++num_islands;
+                    dfs(grid, r, c);
+                }
+            }
+        }
+
+        return num_islands;
+    }
+    /*给你一个正方形矩阵 mat，请你返回矩阵对角线元素的和。
+请你返回在矩阵主对角线上的元素和副对角线上且不在主对角线上元素的和。*/
+    public static int diagonalSum(int[][] mat) {
+        int result = 0;
+        int x = 0;
+        int y = 0;
+        int yi = mat[0].length-1;
+        HashSet hashSet = new HashSet();
+        while(true){
+            if(x==mat.length && y == mat.length)
+                break;
+            if(yi == y)
+                result += mat[x][y];
+            else{
+                result += mat[x][y];
+                result += mat[x][yi];
+            }
+            x++;
+            y++;
+            yi--;
+        }
+        return result;
+    }
+    /*在 MATLAB 中，有一个非常有用的函数 reshape ，它可以将一个m x n 矩阵重塑为另一个大小不同（r x c）的新矩阵，但保留其原始数据。
+给你一个由二维数组 mat 表示的m x n 矩阵，以及两个正整数 r 和 c ，分别表示想要的重构的矩阵的行数和列数。
+重构后的矩阵需要将原始矩阵的所有元素以相同的 行遍历顺序 填充。
+如果具有给定参数的 reshape 操作是可行且合理的，则输出新的重塑矩阵；否则，输出原始矩阵。*/
+    public static int[][] matrixReshape(int[][] nums, int r, int c) {
+        int m = nums.length;
+        int n = nums[0].length;
+        if (m * n != r * c) {
+            return nums;
+        }
+
+        int[][] ans = new int[r][c];
+        for (int x = 0; x < m * n; ++x) {
+            ans[x / c][x % c] = nums[x / n][x % n];
+        }
+        return ans;
     }
 }
