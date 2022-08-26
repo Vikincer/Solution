@@ -71,7 +71,13 @@ class Solution {
         int [][] idiagonalSum = {{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}};
 //        diagonalSum(idiagonalSum);
         int [][] imatrixReshape = {{1,2},{3,4}};
-        matrixReshape(imatrixReshape,2,4);
+//        matrixReshape(imatrixReshape,2,4);
+
+        int [] ipermute = {1,2,3};
+//        permute(ipermute);
+
+//        fib(3);
+        mergeAlternately("ab","pqrs");
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -711,5 +717,160 @@ class Solution {
             ans[x / c][x % c] = nums[x / n][x % n];
         }
         return ans;
+    }
+
+    /*给定两个整数 n 和 k，返回范围 [1, n] 中所有可能的 k 个数的组合。
+你可以按 任何顺序 返回答案。*/
+    List<Integer> temp = new ArrayList<Integer>();
+    List<List<Integer>> ans = new ArrayList<List<Integer>>();
+    public List<List<Integer>> combine(int n, int k) {
+        dfs(1, n, k);
+        return ans;
+    }
+    public void dfs(int cur, int n, int k) {
+        // 剪枝：temp 长度加上区间 [cur, n] 的长度小于 k，不可能构造出长度为 k 的 temp
+        if (temp.size() + (n - cur + 1) < k) {
+            return;
+        }
+        // 记录合法的答案
+        if (temp.size() == k) {
+            ans.add(new ArrayList<Integer>(temp));
+            return;
+        }
+        // 考虑选择当前位置
+        temp.add(cur);
+        dfs(cur + 1, n, k);
+        temp.remove(temp.size() - 1);
+        // 考虑不选择当前位置
+        dfs(cur + 1, n, k);
+    }
+
+    /*给定一个不含重复数字的数组 nums ，返回其 所有可能的全排列 。你可以 按任意顺序 返回答案。*/
+    public static List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        List<Integer> output = new ArrayList<Integer>();
+        for (int num : nums) {
+            output.add(num);
+        }
+
+        int n = nums.length;
+        backtrack(n, output, res, 0);
+        return res;
+    }
+    public static void backtrack(int n, List<Integer> output, List<List<Integer>> res, int first) {
+        // 所有数都填完了
+        if (first == n) {
+            res.add(new ArrayList<Integer>(output));
+        }
+        for (int i = first; i < n; i++) {
+            // 动态维护数组
+            Collections.swap(output, first, i);
+            // 继续递归填下一个数
+            backtrack(n, output, res, first + 1);
+            // 撤销操作
+            Collections.swap(output, first, i);
+        }
+    }
+
+    /*给定一个字符串 s ，通过将字符串 s 中的每个字母转变大小写，我们可以获得一个新的字符串。
+返回 所有可能得到的字符串集合 。以 任意顺序 返回输出。*/
+    public List<String> letterCasePermutation(String S) {
+        List<StringBuilder> ans = new ArrayList();
+        ans.add(new StringBuilder());
+        for (char c: S.toCharArray()) {
+            int n = ans.size();
+            if (Character.isLetter(c)) {
+                for (int i = 0; i < n; ++i) {
+                    ans.add(new StringBuilder(ans.get(i)));
+                    ans.get(i).append(Character.toLowerCase(c));
+                    ans.get(n+i).append(Character.toUpperCase(c));
+                }
+            } else {
+                for (int i = 0; i < n; ++i)
+                    ans.get(i).append(c);
+            }
+        }
+        List<String> finalans = new ArrayList();
+        for (StringBuilder sb: ans)
+            finalans.add(sb.toString());
+        return finalans;
+    }
+
+    /*斐波那契数 （通常用 F(n) 表示）形成的序列称为 斐波那契数列 。该数列由 0 和 1 开始，后面的每一项数字都是前面两项数字的和。也就是：
+     */
+    public static int fib(int n) {
+        if (n < 2) {
+            return n;
+        }
+        int p = 0, q = 0, r = 1;
+        for (int i = 2; i <= n; ++i) {
+            p = q;
+            q = r;
+            r = p + q;
+        }
+        return r;
+    }
+
+    /*假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？*/
+    public int climbStairs(int n) {
+        int p = 0, q = 0, r = 1;
+        for (int i = 1; i <= n; ++i) {
+            p = q;
+            q = r;
+            r = p + q;
+        }
+        return r;
+    }
+    /*给你两个字符串 word1 和 word2 。请你从 word1 开始，通过交替添加字母来合并字符串。如果一个字符串比另一个字符串长，就将多出来的字母追加到合并后字符串的末尾。
+返回 合并后的字符串 。*/
+    public static String mergeAlternately(String word1, String word2) {
+        int len = 0;
+        String res = "";
+        if(word1.length()<word2.length()){
+            len = word1.length();
+            String substring = word2.substring(0, len);
+            String endstring = word2.substring(len,word2.length());
+            char[] chars1 = word1.toCharArray();
+            char[] chars2 = substring.toCharArray();
+            for (int i = 0; i<len; i++){
+                res += chars1[i] + "" + chars2[i];
+            }
+            res += endstring;
+        }else{
+            len = word2.length();
+            String substring = word1.substring(0, len);
+            String endstring = word1.substring(len,word1.length());
+            char[] chars1 = word2.toCharArray();
+            char[] chars2 = substring.toCharArray();
+            for (int i = 0; i<len; i++){
+                res += chars2[i] + "" + chars1[i];
+            }
+            res += endstring;
+        }
+        return res;
+    }
+    /*请你设计一个可以解释字符串 command 的 Goal 解析器 。command 由 "G"、"()" 和/或 "(al)" 按某种顺序组成。Goal 解析器会将 "G" 解释为字符串 "G"、"()" 解释为字符串 "o" ，"(al)" 解释为字符串 "al" 。然后，按原顺序将经解释得到的字符串连接成一个字符串。
+给你字符串 command ，返回 Goal 解析器 对 command 的解释结果。*/
+    public String interpret(String command) {
+        return command.replace("()", "o").replace("(al)", "al");
+    }
+    /*给定两个字符串 s 和 t ，它们只包含小写字母。
+字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。
+请找出在 t 中被添加的字母。*/
+    public char findTheDifference(String s, String t) {
+        int[] cnt = new int[26];
+        for (int i = 0; i < s.length(); ++i) {
+            char ch = s.charAt(i);
+            cnt[ch - 'a']++;
+        }
+        for (int i = 0; i < t.length(); ++i) {
+            char ch = t.charAt(i);
+            cnt[ch - 'a']--;
+            if (cnt[ch - 'a'] < 0) {
+                return ch;
+            }
+        }
+        return ' ';
     }
 }
