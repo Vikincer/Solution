@@ -77,7 +77,14 @@ class Solution {
 //        permute(ipermute);
 
 //        fib(3);
-        mergeAlternately("ab","pqrs");
+//        mergeAlternately("ab","pqrs");
+
+//        uniquePaths(3,7);
+//        findAnagrams("abcsadsadgghfdhabccba","abc");
+
+//        characterReplacement("AABAACDSGASZSF",2);
+//        int [] irob = {2,2,3,1,1};
+//        rob(irob);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -873,4 +880,192 @@ class Solution {
         }
         return ' ';
     }
+
+    /*给你一个字符串 s ，将该字符串中的大写字母转换成相同的小写字母，返回新的字符串。*/
+    public String toLowerCase(String s) {
+        return s.toLowerCase();
+    }
+    /*给你一个字符串s，它由数字（'0' - '9'）和'#'组成。我们希望按下述规则将s映射为一些小写英文字符：
+字符（'a' - 'i'）分别用（'1' -'9'）表示。
+字符（'j' - 'z'）分别用（'10#'-'26#'）表示。
+返回映射之后形成的新字符串。
+题目数据保证映射始终唯一。
+*/
+    public String freqAlphabets(String s) {
+        String[] table = new String[17];
+        for(int i=0;i<table.length;i++)
+            table[i] = i+10+"#";
+        for(int j=0;j<table.length;j++)
+            s=s.replace(table[j],String.valueOf((char)(j+'a'+9)));
+        for(int i=1;i<=9;i++)
+            s=s.replace(i+"", String.valueOf((char)(i+'a'-1)));
+        return s;
+    }
+    /*某种外星语也使用英文小写字母，但可能顺序 order 不同。字母表的顺序（order）是一些小写字母的排列。
+给定一组用外星语书写的单词 words，以及其字母表的顺序 order，只有当给定的单词在这种外星语中按字典序排列时，返回 true；否则，返回 false。*/
+    public boolean isAlienSorted(String[] words, String order) {
+        int[] index = new int[26];
+        for (int i = 0; i < order.length(); ++i) {
+            index[order.charAt(i) - 'a'] = i;
+        }
+        for (int i = 1; i < words.length; i++) {
+            boolean valid = false;
+            for (int j = 0; j < words[i - 1].length() && j < words[i].length(); j++) {
+                int prev = index[words[i - 1].charAt(j) - 'a'];
+                int curr = index[words[i].charAt(j) - 'a'];
+                if (prev < curr) {
+                    valid = true;
+                    break;
+                } else if (prev > curr) {
+                    return false;
+                }
+            }
+            if (!valid) {
+                /* 比较两个字符串的长度 */
+                if (words[i - 1].length() > words[i].length()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /*给你一个单链表的引用结点head。链表中每个结点的值不是 0 就是 1。已知此链表是一个整数数字的二进制表示形式。
+请你返回该链表所表示数字的 十进制值 。*/
+    public int getDecimalValue(ListNode head) {
+        ListNode curNode = head;
+        int ans = 0;
+        while (curNode != null) {
+            ans = ans * 2 + curNode.val;
+            curNode = curNode.next;
+        }
+        return ans;
+    }
+
+    /*给你一个整数数组 cost ，其中 cost[i] 是从楼梯第 i 个台阶向上爬需要支付的费用。一旦你支付此费用，即可选择向上爬一个或者两个台阶。
+你可以选择从下标为 0 或下标为 1 的台阶开始爬楼梯。
+请你计算并返回达到楼梯顶部的最低花费。*/
+    public int minCostClimbingStairs(int[] cost) {
+        int n = cost.length;
+        int[] dp = new int[n + 1];
+        dp[0] = dp[1] = 0;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = Math.min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2]);
+        }
+        return dp[n];
+    }
+    /*一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+问总共有多少条不同的路径？*/
+    public static int uniquePaths(int m, int n) {
+        int [][] dp = new int [m][n];
+        for (int i = 0; i < n; i++) dp[0][i] = 1;
+        for (int i = 0; i < m; i++) dp[i][0] = 1;
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+    /*给定两个字符串s和 p，找到s中所有p的异位词的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+异位词 指由相同字母重排列形成的字符串（包括相同的字符串）。*/
+    public static List<Integer> findAnagrams(String s, String p) {
+        int sLen = s.length(), pLen = p.length();
+        if (sLen < pLen) {
+            return new ArrayList<Integer>();
+        }
+
+        List<Integer> ans = new ArrayList<Integer>();
+        int[] sCount = new int[26];
+        int[] pCount = new int[26];
+        for (int i = 0; i < pLen; ++i) {
+            ++sCount[s.charAt(i) - 'a'];
+            ++pCount[p.charAt(i) - 'a'];
+        }
+
+        if (Arrays.equals(sCount, pCount)) {
+            ans.add(0);
+        }
+
+        for (int i = 0; i < sLen - pLen; ++i) {
+            --sCount[s.charAt(i) - 'a'];
+            ++sCount[s.charAt(i + pLen) - 'a'];
+
+            if (Arrays.equals(sCount, pCount)) {
+                ans.add(i + 1);
+            }
+        }
+
+        return ans;
+    }
+    /*给你一个字符串 s 和一个整数 k 。你可以选择字符串中的任一字符，并将其更改为任何其他大写英文字符。该操作最多可执行 k 次。
+在执行上述操作后，返回包含相同字母的最长子字符串的长度。*/
+    public static int characterReplacement(String s, int k) {
+        int[] num = new int[26];
+        int n = s.length();
+        int maxn = 0;
+        int left = 0, right = 0;
+        while (right < n) {
+            num[s.charAt(right) - 'A']++;
+            maxn = Math.max(maxn, num[s.charAt(right) - 'A']);
+            if (right - left + 1 - maxn > k) {
+                num[s.charAt(left) - 'A']--;
+                left++;
+            }
+            right++;
+        }
+        return right - left;
+    }
+    /*你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，
+    影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。*/
+    public static int rob(int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        }
+        // 子问题：
+        // f(k) = 偷 [0..k) 房间中的最大金额
+
+        // f(0) = 0
+        // f(1) = nums[0]
+        // f(k) = max{ rob(k-1), nums[k-1] + rob(k-2) }
+
+        int N = nums.length;
+        int[] dp = new int[N+1];
+        dp[0] = 0;
+        dp[1] = nums[0];
+        for (int k = 2; k <= N; k++) {
+            dp[k] = Math.max(dp[k-1], nums[k-1] + dp[k-2]);
+        }
+        return dp[N];
+    }
+    /*给定一个三角形 triangle ，找出自顶向下的最小路径和。
+每一步只能移动到下一行中相邻的结点上。
+相邻的结点 在这里指的是 下标 与 上一层结点下标 相同或者等于 上一层结点下标 + 1 的两个结点。
+也就是说，如果正位于当前行的下标 i ，那么下一步可以移动到下一行的下标 i 或 i + 1 。*/
+    public static int minimumTotal(List<List<Integer>> triangle) {
+        int n = triangle.size();
+        int[][] f = new int[n][n];
+        f[0][0] = triangle.get(0).get(0);
+        for (int i = 1; i < n; ++i) {
+            f[i][0] = f[i - 1][0] + triangle.get(i).get(0);
+            for (int j = 1; j < i; ++j) {
+                f[i][j] = Math.min(f[i - 1][j - 1], f[i - 1][j]) + triangle.get(i).get(j);
+            }
+            f[i][i] = f[i - 1][i - 1] + triangle.get(i).get(i);
+        }
+        int minTotal = f[n - 1][0];
+        for (int i = 1; i < n; ++i) {
+            minTotal = Math.min(minTotal, f[n - 1][i]);
+        }
+        return minTotal;
+    }
+    /*给你一个整数 n，请你判断该整数是否是 2 的幂次方。如果是，返回 true ；否则，返回 false 。
+如果存在一个整数 x 使得n == 2x ，则认为 n 是 2 的幂次方。
+*/
+    public boolean isPowerOfTwo(int n) {
+        return n > 0 && (n & (n - 1)) == 0;
+    }
+
 }
