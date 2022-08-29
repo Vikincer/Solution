@@ -85,6 +85,10 @@ class Solution {
 //        characterReplacement("AABAACDSGASZSF",2);
 //        int [] irob = {2,2,3,1,1};
 //        rob(irob);
+//        isAnagram("anagram","nagaram");
+
+        int [] itwosSum = {3,2,4};
+        twosSum(itwosSum,6);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -1068,4 +1072,111 @@ class Solution {
         return n > 0 && (n & (n - 1)) == 0;
     }
 
+    /*给你一个整数数组arr。请你将数组中的元素按照其二进制表示中数字 1 的数目升序排序。
+如果存在多个数字二进制中1的数目相同，则必须将它们按照数值大小升序排列。
+请你返回排序后的数组。*/
+    public int[] sortByBits(int[] arr) {
+        int [] res = new int [arr.length];
+        for (int i =0; i<arr.length; i++){
+            //转二进制
+            res[i] = Integer.bitCount(arr[i]) * 100000 + arr[i];
+        }
+        Arrays.sort(res);
+        for (int i = 0; i<res.length; i++){
+            res[i] = res[i]%100000;
+        }
+        return res;
+    }
+    /*给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。
+注意：若s 和 t中每个字符出现的次数都相同，则称s 和 t互为字母异位词。*/
+    public static boolean isAnagram(String s, String t) {
+        if(s.length() != t.length())
+            return  false;
+        int [] stemp = new int [26];
+        int [] ttemp = new int [26];
+        for(int i = 0; i<s.length(); i++){
+            ++stemp[s.charAt(i) - 'a'];
+            ++ttemp[t.charAt(i) - 'a'];
+        }
+        if(Arrays.equals(stemp,ttemp))
+            return true;
+        return false;
+    }
+    /*给你一个整数数组 nums 。如果任一值在数组中出现 至少两次 ，返回 true ；如果数组中每个元素互不相同，返回 false 。*/
+    public boolean containsDuplicate(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i<nums.length-1; i++){
+            if(nums[i] == nums[i+1])
+                return true;
+        }
+        return false;
+    }
+    /*给定一个整数数组 nums和一个整数目标值 target，
+    请你在该数组中找出 和为目标值 target 的那两个整数，并返回它们的数组下标。
+你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。
+你可以按任意顺序返回答案。*/
+    public static int[] twosSum(int[] nums, int target) {
+        HashMap<Integer, Integer> hash = new HashMap<>();
+        int [] res = new int [2];
+        for (int i = 0; i<nums.length; i++){
+            int temp = target - nums[i];
+            if(!hash.containsKey(temp)){
+                hash.put(nums[i],i);
+            }else{
+                res[0] = hash.get(temp);
+                res[1] = i;
+            }
+        }
+        return res;
+    }
+    /*你在和朋友一起玩 猜数字（Bulls and Cows）游戏，该游戏规则如下：
+写出一个秘密数字，并请朋友猜这个数字是多少。朋友每猜测一次，你就会给他一个包含下述信息的提示：
+猜测数字中有多少位属于数字和确切位置都猜对了（称为 "Bulls"，公牛），
+有多少位属于数字猜对了但是位置不对（称为 "Cows"，奶牛）。也就是说，这次猜测中有多少位非公牛数字可以通过重新排列转换成公牛数字。
+给你一个秘密数字secret 和朋友猜测的数字guess ，请你返回对朋友这次猜测的提示。
+提示的格式为 "xAyB" ，x 是公牛个数， y 是奶牛个数，A 表示公牛，B表示奶牛。
+请注意秘密数字和朋友猜测的数字都可能含有重复数字。*/
+    public String getHint(String secret, String guess) {
+        int A = 0;
+        int B = 0;
+        int [] sarr = new int [10];
+        int [] garr = new int [10];
+        int n = secret.length();
+        for (int i = 0; i<n;i++){
+            if(secret.charAt(i) == guess.charAt(i)){
+                A++;
+            }else{
+                ++sarr[secret.charAt(i)-'0'];
+                ++garr[guess.charAt(i)-'0'];
+            }
+        }
+        for (int i = 0; i<10; i++){
+            B += Math.min(sarr[i],garr[i]);
+        }
+        return A + "A" + B + "B";
+    }
+    /*颠倒给定的 32 位无符号整数的二进制位。
+提示：
+请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。
+在 Java 中，编译器使用二进制补码记法来表示有符号整数。因此，在 示例 2 中，输入表示有符号整数 -3，输出表示有符号整数 -1073741825。
+*/
+    public int reverseBits(int n) {
+        int ret = 0;
+        for (int i = 0; i < 32; i++) {
+            ret <<= 1;
+            ret += (n & 1);
+            n >>= 1;
+        }
+        return ret;
+    }
+    /*给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+说明：
+你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？*/
+    public int singleNumber(int[] nums) {
+        int single = 0;
+        for (int num : nums) {
+            single ^= num;
+        }
+        return single;
+    }
 }
