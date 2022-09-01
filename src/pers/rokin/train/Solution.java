@@ -92,7 +92,10 @@ class Solution {
 
 //        backspaceCompare("ac#b","as#b");
         int [] isearchRange = {5,7,7,8,8,10};
-        searchRange(isearchRange,8);
+//        searchRange(isearchRange,8);
+
+        int [][] isearchMatrix = {{1},{3}};
+        searchMatrix(isearchMatrix,3);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -1265,5 +1268,49 @@ class Solution {
                 return i;
         }
         return -1;
+    }
+    /*编写一个高效的算法来判断m x n矩阵中，是否存在一个目标值。该矩阵具有如下特性：
+每行中的整数从左到右按升序排列。
+每行的第一个整数大于前一行的最后一个整数*/
+    public static boolean searchMatrix(int[][] matrix, int target) {
+        int index = 0;
+        System.out.println(matrix.length-1);
+        for (int i = 0; i<matrix.length-1; i++){
+            if(matrix[i][0] <= target && matrix[i+1][0] > target){
+                index = i;
+                break;
+            }
+            if(i == matrix.length-2)
+                index = matrix.length-1;
+        }
+        for (int i = 0; i<matrix[index].length; i++){
+            if(target == matrix[index][i])
+                return true;
+        }
+        return  false;
+
+    }
+    /*已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到：
+若旋转 4 次，则可以得到 [4,5,6,7,0,1,2]
+若旋转 7 次，则可以得到 [0,1,2,4,5,6,7]
+注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 。
+给你一个元素值 互不相同 的数组 nums ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 最小元素 。
+你必须设计一个时间复杂度为O(log n) 的算法解决此问题。*/
+    public int findMin(int[] nums) {
+        Arrays.sort(nums);
+        return nums[0];
+    }
+    /*峰值元素是指其值严格大于左右相邻值的元素。
+给你一个整数数组nums，找到峰值元素并返回其索引。数组可能包含多个峰值，在这种情况下，返回 任何一个峰值 所在位置即可。
+你可以假设nums[-1] = nums[n] = -∞ 。
+你必须实现时间复杂度为 O(log n) 的算法来解决此问题。*/
+    public int findPeakElement(int[] nums) {
+        int idx = 0;
+        for (int i = 1; i < nums.length; ++i) {
+            if (nums[i] > nums[idx]) {
+                idx = i;
+            }
+        }
+        return idx;
     }
 }
