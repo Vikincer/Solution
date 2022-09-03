@@ -95,7 +95,13 @@ class Solution {
 //        searchRange(isearchRange,8);
 
         int [][] isearchMatrix = {{1},{3}};
-        searchMatrix(isearchMatrix,3);
+//        searchMatrix(isearchMatrix,3);
+
+        int [] ithreeSum = {-1,0,1,2-1,-4};
+//        threeSum(ithreeSum);
+
+        int [] imaxArea = {1,8,6,2,5,4,8,3,7};
+        maxArea(imaxArea);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -1317,7 +1323,7 @@ class Solution {
      满足 i != j、i != k 且 j != k ，同时还满足 nums[i] + nums[j] + nums[k] == 0 。请
 你返回所有和为 0 且不重复的三元组。
 注意：答案中不可以包含重复的三元组。*/
-    public List<List<Integer>> threeSum(int[] nums) {
+    public static List<List<Integer>> threeSum(int[] nums) {
         List<List<Integer>> ans = new ArrayList();
         int len = nums.length;
         if(nums == null || len < 3) return ans;
@@ -1341,5 +1347,44 @@ class Solution {
             }
         }
         return ans;
+    }
+    /*给定两个由一些 闭区间 组成的列表，firstList 和 secondList ，其中 firstList[i] = [starti, endi] 而secondList[j] = [startj, endj] 。每个区间列表都是成对 不相交 的，并且 已经排序 。
+返回这 两个区间列表的交集 。
+形式上，闭区间[a, b]（其中a <= b）表示实数x的集合，而a <= x <= b 。
+两个闭区间的 交集 是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。*/
+    public int[][] intervalIntersection(int[][] A, int[][] B) {
+        List<int[]> ans = new ArrayList();
+        int i = 0, j = 0;
+
+        while (i < A.length && j < B.length) {
+            // Let's check if A[i] intersects B[j].
+            // lo - the startpoint of the intersection
+            // hi - the endpoint of the intersection
+            int lo = Math.max(A[i][0], B[j][0]);
+            int hi = Math.min(A[i][1], B[j][1]);
+            if (lo <= hi)
+                ans.add(new int[]{lo, hi});
+
+            // Remove the interval with the smallest endpoint
+            if (A[i][1] < B[j][1])
+                i++;
+            else
+                j++;
+        }
+
+        return ans.toArray(new int[ans.size()][]);
+    }
+    /*给定一个长度为 n 的整数数组height。有n条垂线，第 i 条线的两个端点是(i, 0)和(i, height[i])。
+找出其中的两条线，使得它们与x轴共同构成的容器可以容纳最多的水。
+返回容器可以储存的最大水量。
+说明：你不能倾斜容器。*/
+    public static int maxArea(int[] height) {
+        int i = 0, j = height.length - 1, res = 0;
+        while(i < j) {
+            res = height[i] < height[j] ?
+                    Math.max(res, (j - i) * height[i++]):
+                    Math.max(res, (j - i) * height[j--]);
+        }
+        return res;
     }
 }
