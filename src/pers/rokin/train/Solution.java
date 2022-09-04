@@ -101,7 +101,7 @@ class Solution {
 //        threeSum(ithreeSum);
 
         int [] imaxArea = {1,8,6,2,5,4,8,3,7};
-        maxArea(imaxArea);
+//        maxArea(imaxArea);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -1386,5 +1386,140 @@ class Solution {
                     Math.max(res, (j - i) * height[j--]);
         }
         return res;
+    }
+    /*如果数组是单调递增或单调递减的，那么它是单调 的。
+如果对于所有 i <= j，nums[i] <= nums[j]，那么数组 nums 是单调递增的。 如果对于所有 i <= j，nums[i]> = nums[j]，那么数组 nums是单调递减的。
+当给定的数组 nums是单调数组时返回 true，否则返回 false。*/
+    public boolean isMonotonic(int[] nums) {
+        if(nums[0] < nums[nums.length-1]){
+            for (int i = 0; i< nums.length-1; i++){
+                if(nums[i] > nums[i+1]){
+                    return false;
+                }
+            }
+        }else if(nums[0] > nums[nums.length-1]){
+            for (int i = 0; i< nums.length-2; i++){
+                if(nums[i] < nums[i+1]){
+                    return false;
+                }
+            }
+        }else if(nums.length <= 2 && nums[0] == nums[nums.length-1]){
+            return true;
+        }else{
+            for (int i = 0; i< nums.length-1; i++){
+                if(nums[i] != nums[i+1]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    /*实现strStr()函数。
+给你两个字符串haystack 和 needle ，请你在 haystack 字符串中找出 needle 字符串出现的第一个位置（下标从 0 开始）。如果不存在，则返回  -1 。
+说明：
+当needle是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+对于本题而言，当needle是空字符串时我们应当返回 0 。这与 C 语言的strstr()以及 Java 的indexOf()定义相符。*/
+    public int strStr(String haystack, String needle) {
+            return haystack.indexOf(needle);
+    }
+    /*给定一个二叉树，判断它是否是高度平衡的二叉树。
+本题中，一棵高度平衡二叉树定义为：
+一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1 。*/
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+    public boolean isBalanced(TreeNode root) {
+        return recur(root) != -1;
+    }
+    private int recur(TreeNode root) {
+        if (root == null) return 0;
+        int left = recur(root.left);
+        if(left == -1) return -1;
+        int right = recur(root.right);
+        if(right == -1) return -1;
+        return Math.abs(left - right) < 2 ? Math.max(left, right) + 1 : -1;
+    }
+    /*给定一个非空的字符串 s ，检查是否可以通过由它的一个子串重复多次构成。*/
+        public boolean repeatedSubstringPattern(String s) {
+            return kmp(s + s, s);
+        }
+
+        public boolean kmp(String query, String pattern) {
+            int n = query.length();
+            int m = pattern.length();
+            int[] fail = new int[m];
+            Arrays.fill(fail, -1);
+            for (int i = 1; i < m; ++i) {
+                int j = fail[i - 1];
+                while (j != -1 && pattern.charAt(j + 1) != pattern.charAt(i)) {
+                    j = fail[j];
+                }
+                if (pattern.charAt(j + 1) == pattern.charAt(i)) {
+                    fail[i] = j + 1;
+                }
+            }
+            int match = -1;
+            for (int i = 1; i < n - 1; ++i) {
+                while (match != -1 && pattern.charAt(match + 1) != query.charAt(i)) {
+                    match = fail[match];
+                }
+                if (pattern.charAt(match + 1) == query.charAt(i)) {
+                    ++match;
+                    if (match == m - 1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+    }
+    /*给你一个整数数组 nums 和一个整数 k ，请你返回子数组内所有元素的乘积严格小于 k 的连续子数组的数目。
+     */
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        // 滑动窗口：寻找以每个 right 指针为右边界的有效连续子树组的个数
+        int length = nums.length;
+        int product = 1;
+        int cnt = 0;
+        int left = 0, right = 0;
+        while (right < length) {
+            product *= nums[right++];
+
+            while (left < right && product >= k) {
+                product /= nums[left++];
+            }
+
+            cnt += (right - left);
+        }
+
+        return cnt;
+    }
+    /*给定一个含有n个正整数的数组和一个正整数 target 。
+找出该数组中满足其和 ≥ target 的长度最小的 连续子数组[numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。*/
+    public int minSubArrayLen(int s, int[] nums) {
+        int n = nums.length;
+        if (n == 0) {
+            return 0;
+        }
+        int ans = Integer.MAX_VALUE;
+        int start = 0, end = 0;
+        int sum = 0;
+        while (end < n) {
+            sum += nums[end];
+            while (sum >= s) {
+                ans = Math.min(ans, end - start + 1);
+                sum -= nums[start];
+                start++;
+            }
+            end++;
+        }
+        return ans == Integer.MAX_VALUE ? 0 : ans;
     }
 }
