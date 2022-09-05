@@ -3,6 +3,8 @@ package pers.rokin.train;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static jdk.nashorn.internal.runtime.JSType.isNumber;
+
 class Solution {
     public class ListNode {
         int val;
@@ -102,6 +104,8 @@ class Solution {
 
         int [] imaxArea = {1,8,6,2,5,4,8,3,7};
 //        maxArea(imaxArea);
+
+        System.out.println("10%10" + 10%10);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -1521,5 +1525,67 @@ class Solution {
             end++;
         }
         return ans == Integer.MAX_VALUE ? 0 : ans;
+    }
+    /*根据 逆波兰表示法，求表达式的值。
+有效的算符包括+、-、*、/。每个运算对象可以是整数，也可以是另一个逆波兰表达式。
+注意两个整数之间的除法只保留整数部分。
+可以保证给定的逆波兰表达式总是有效的。换句话说，表达式总会得出有效数值且不存在除数为 0 的情况。*/
+    public int evalRPN(String[] tokens) {
+        Deque<Integer> stack = new LinkedList<>();
+        for (int i = 0; i<tokens.length; i++){
+            String n = tokens[i];
+            if(isNumber(n)){
+                stack.push(Integer.parseInt(n));
+            }else{
+                int nums1 = stack.poll();
+                int nums2 = stack.poll();
+                switch(n){
+                    case "+" : stack.push(nums1 + nums2); break;
+                    case "-" : stack.push(nums1 - nums2); break;
+                    case "*" : stack.push(nums1 * nums2); break;
+                    case "/" : stack.push(nums1 / nums2); break;
+                    default:
+                }
+            }
+        }
+        return stack.poll();
+    }
+    /*给定一个由 整数 组成的 非空 数组所表示的非负整数，在该数的基础上加一。
+最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+你可以假设除了整数 0 之外，这个整数不会以零开头*/
+    public int[] plusOne(int[] digits) {
+        for (int i = digits.length - 1; i >= 0; i--) {
+            digits[i]++;
+            digits[i] = digits[i] % 10;
+            if (digits[i] != 0) return digits;
+        }
+        digits = new int[digits.length + 1];
+        digits[0] = 1;
+        return digits;
+    }
+    /*有 n 个城市，其中一些彼此相连，另一些没有相连。如果城市 a 与城市 b 直接相连，且城市 b 与城市 c 直接相连，那么城市 a 与城市 c 间接相连。
+省份 是一组直接或间接相连的城市，组内不含其他没有相连的城市。
+给你一个 n x n 的矩阵 isConnected ，其中 isConnected[i][j] = 1 表示第 i 个城市和第 j 个城市直接相连，而 isConnected[i][j] = 0 表示二者不直接相连。
+返回矩阵中 省份 的数量。*/
+    public int findCircleNum(int[][] isConnected) {
+        int cities = isConnected.length;
+        boolean[] visited = new boolean[cities];
+        int provinces = 0;
+        for (int i = 0; i < cities; i++) {
+            if (!visited[i]) {
+                dfs(isConnected, visited, cities, i);
+                provinces++;
+            }
+        }
+        return provinces;
+    }
+
+    public void dfs(int[][] isConnected, boolean[] visited, int cities, int i) {
+        for (int j = 0; j < cities; j++) {
+            if (isConnected[i][j] == 1 && !visited[j]) {
+                visited[j] = true;
+                dfs(isConnected, visited, cities, j);
+            }
+        }
     }
 }
