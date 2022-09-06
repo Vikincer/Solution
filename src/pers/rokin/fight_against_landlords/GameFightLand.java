@@ -19,6 +19,8 @@ public class GameFightLand {
         }
         cards.add("大王");
         cards.add("小王");
+        
+        
 
         //打乱排序并发牌给a，b，c三个玩家 并且将最后的三张放于底牌（地主牌）
         Collections.shuffle(cards);//打乱卡牌

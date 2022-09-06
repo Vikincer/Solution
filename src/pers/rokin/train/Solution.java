@@ -13,6 +13,18 @@ class Solution {
         ListNode(int val) { this.val = val; }
         ListNode(int val, ListNode next) { this.val = val; this.next = next; }
     }
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
     public static void main(String[] args) {
         int [][] envelopes = {{5,4},{6,4},{6,7},{2,3}};
         int [] test = {3,5,1,6,2,5};
@@ -105,7 +117,19 @@ class Solution {
         int [] imaxArea = {1,8,6,2,5,4,8,3,7};
 //        maxArea(imaxArea);
 
-        System.out.println("10%10" + 10%10);
+        Random random = new Random();
+        for (int ind = 0; ind<10; ind++){
+            System.out.println(random.nextInt(11));
+        }
+        String strrrr = "sadsada";
+        char[] chars1 = strrrr.toCharArray();
+        ArrayList<Character> li = new ArrayList<>();
+        for (char c : chars1){
+            li.add(c);
+        }
+        Collections.shuffle(li);
+
+
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -1429,18 +1453,6 @@ class Solution {
     /*给定一个二叉树，判断它是否是高度平衡的二叉树。
 本题中，一棵高度平衡二叉树定义为：
 一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1 。*/
-    public class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-        TreeNode() {}
-        TreeNode(int val) { this.val = val; }
-        TreeNode(int val, TreeNode left, TreeNode right) {
-            this.val = val;
-            this.left = left;
-            this.right = right;
-        }
-    }
     public boolean isBalanced(TreeNode root) {
         return recur(root) != -1;
     }
@@ -1588,4 +1600,69 @@ class Solution {
             }
         }
     }
+    /*给你一棵以root为根的二叉树和一个head为第一个节点的链表。
+如果在二叉树中，存在一条一直向下的路径，且每个点的数值恰好一一对应以head为首的链表中每个节点的值，那么请你返回 True ，否则返回 False 。
+一直向下的路径的意思是：从树中某个节点开始，一直连续向下的路径。*/
+        public boolean isSubPath(ListNode head, TreeNode root) {
+            if (head == null) {//满足条件，直接返回true。
+                return true;
+            }
+
+            if (root == null) {//能执行到这里说明head不为空，此时root为空的话不可能有正确结果，直接返回false。
+                return false;
+            }
+            //这里可能比较难以理解，这里是调用了一个DfsSame和两个isSubPath.
+            //DfsSame的含义大家可以看下面，注释很详细。
+            //isSubPath就是当前的这个方法，所干的事情就是深度优先遍历DFS，他利用本身这个方法调用，来遍历root中每一个节点。
+            //所以总结一下就是两个isSubPath用来遍历当前位置的左右子树。
+            //一个DfsSame判断当前的root节点的值是否与head的第一个节点的值相同。
+            //在本方法中调用的DfsSame，root节点比较的永远是head第一个节点的值，也必须比较head第一个节点的值。
+            //判断head后续节点的值需要的前提条件是之前的节点已经找到了连续向下的路径。
+            return DfsSame(head,root) || isSubPath(head,root.left) || isSubPath(head,root.right);
+        }
+
+        //判断当前root节点与当前head节点的内容是否相同。
+        private boolean DfsSame(ListNode head,TreeNode root) {
+            if(head == null) {//则说明head已经遍历完毕，已经在root中寻找到了与head相同连续向下的路径
+                return true;
+            }
+
+            if (root == null) {//head不为空但root以为空，在此路径上不可能寻找到相同路径了，返回false
+                return false;
+            }
+
+            if (root.val != head.val) {//值不相同，直接返回false.
+                return false;
+            }
+            //当前位置相同，root向下(向下寻找左右子树),head向后寻找下一个节点
+            return DfsSame(head.next,root.left) || DfsSame(head.next,root.right);
+        }
+        /*给定两个以字符串形式表示的非负整数num1和num2，返回num1和num2的乘积，它们的乘积也表示为字符串形式。
+注意：不能使用任何内置的 BigInteger 库或直接将输入转换为整数。*/
+        public String multiply(String num1, String num2) {
+            if (num1.equals("0") || num2.equals("0")) {
+                return "0";
+            }
+            int m = num1.length(), n = num2.length();
+            int[] ansArr = new int[m + n];
+            for (int i = m - 1; i >= 0; i--) {
+                int x = num1.charAt(i) - '0';
+                for (int j = n - 1; j >= 0; j--) {
+                    int y = num2.charAt(j) - '0';
+                    ansArr[i + j + 1] += x * y;
+                }
+            }
+            for (int i = m + n - 1; i > 0; i--) {
+                ansArr[i - 1] += ansArr[i] / 10;
+                ansArr[i] %= 10;
+            }
+            int index = ansArr[0] == 0 ? 1 : 0;
+            StringBuffer ans = new StringBuffer();
+            while (index < m + n) {
+                ans.append(ansArr[index]);
+                index++;
+            }
+            return ans.toString();
+        }
+
 }
