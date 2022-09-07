@@ -117,18 +117,7 @@ class Solution {
         int [] imaxArea = {1,8,6,2,5,4,8,3,7};
 //        maxArea(imaxArea);
 
-        Random random = new Random();
-        for (int ind = 0; ind<10; ind++){
-            System.out.println(random.nextInt(11));
-        }
-        String strrrr = "sadsada";
-        char[] chars1 = strrrr.toCharArray();
-        ArrayList<Character> li = new ArrayList<>();
-        for (char c : chars1){
-            li.add(c);
-        }
-        Collections.shuffle(li);
-
+        addBinary("1011","100011");
 
     }
     /**
@@ -1664,5 +1653,13 @@ class Solution {
             }
             return ans.toString();
         }
+        /*
+        * 给你两个二进制字符串，返回它们的和（用二进制表示）。
+输入为 非空 字符串且只包含数字 1 和 0。*/
+    public static String addBinary(String a, String b) {
+        return Integer.toBinaryString(
+                Integer.parseInt(a, 2) + Integer.parseInt(b, 2)
+        );
+    }
 
 }
