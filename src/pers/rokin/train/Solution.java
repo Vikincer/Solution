@@ -1683,4 +1683,93 @@ class Solution {
         Collections.reverse(res);
         return res;
     }
+    /*给你一个 n x n 的二进制矩阵 grid 中，返回矩阵中最短 畅通路径 的长度。如果不存在这样的路径，返回 -1 。
+二进制矩阵中的 畅通路径 是一条从 左上角 单元格（即，(0, 0)）到 右下角 单元格（即，(n - 1, n - 1)）的路径，该路径同时满足下述要求：
+路径途经的所有单元格都的值都是 0 。
+路径中所有相邻的单元格应当在 8 个方向之一 上连通（即，相邻两单元之间彼此不同且共享一条边或者一个角）。
+畅通路径的长度 是该路径途经的单元格总数。*/
+    static class Node {
+        int x;
+        int y;
+        int step;
+
+        public Node(int start, int end, int step) {
+            this.x = start;
+            this.y = end;
+            this.step = step;
+        }
+    }
+
+    int[] dx = {0, 0, -1, 1,-1, 1,-1, 1};
+    int[] dy = {-1, 1, 0, 0, -1,-1, 1, 1};
+
+    public int shortestPathBinaryMatrix(int[][] grid) {
+
+        Node node = new Node(0, 0, 2);
+        Deque<Node> queue = new ArrayDeque<>();
+        queue.addLast(node);
+
+        int n = grid.length;
+        if (grid[0][0] == 1 || grid[n - 1][n - 1] == 1) {
+            return -1;
+        } else if (n <= 2) {
+            return n;
+        }
+        while (!queue.isEmpty()){
+            Node cur = queue.removeFirst();
+            int x = cur.x;
+            int y = cur.y;
+            int step = cur.step;
+            for (int i = 0; i < 8; i++) {
+                int newX = x + dx[i];
+                int newY = y + dy[i];
+                if(0<=newX && newX<n && 0<=newY && newY<n && grid[newX][newY] == 0){
+                    //找到终点
+                    if(newX == n-1 && newY == n-1){
+                        return step ;
+                    }
+                    queue.addLast(new Node(newX, newY, step + 1));
+                    grid[newX][newY] = 1; //标记已遍历过，避免重复
+                }
+            }
+        }
+        return -1;
+    }
+    /*给你一个 m x n 的矩阵 board ，由若干字符 'X' 和 'O' ，找到所有被 'X' 围绕的区域，并将这些区域里所有的 'O' 用 'X' 填充。*/
+    static int n,m;
+    public static void solve(char[][] board) {
+        n = board.length;
+        if (n == 0) {
+            return;
+        }
+        m = board[0].length;
+        for (int i = 0; i < n; i++) {
+            dfs1(board, i, 0);
+            dfs1(board, i, m - 1);
+        }
+        for (int i = 1; i < m - 1; i++) {
+            dfs1(board, 0, i);
+            dfs1(board, n - 1, i);
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (board[i][j] == 'A') {
+                    board[i][j] = 'O';
+                } else if (board[i][j] == 'O') {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+    }
+
+    public static void dfs1(char[][] board, int x, int y) {
+        if (x < 0 || x >= n || y < 0 || y >= m || board[x][y] != 'O') {
+            return;
+        }
+        board[x][y] = 'A';
+        dfs1(board, x + 1, y);
+        dfs1(board, x - 1, y);
+        dfs1(board, x, y + 1);
+        dfs1(board, x, y - 1);
+    }
 }
