@@ -117,8 +117,10 @@ class Solution {
         int [] imaxArea = {1,8,6,2,5,4,8,3,7};
 //        maxArea(imaxArea);
 
-        addBinary("1011","100011");
+//        addBinary("1011","100011");
 
+        int [] idailyTemperatures = {73,74,71,65,72,76,73};
+        dailyTemperatures(idailyTemperatures);
     }
     /**
      * 给你一个二维整数数组 envelopes ，其中 envelopes[i] = [wi, hi] ，表示第 i 个信封的宽度和高度。
@@ -1800,5 +1802,27 @@ class Solution {
             record[cur] = i;
             subSet(nums, record, cur + 1);  //递归构造子集
         }
+    }
+    /*给你一个字符串 s，由若干单词组成，单词前后用一些空格字符隔开。返回字符串中 最后一个 单词的长度。
+单词 是指仅由字母组成、不包含任何空格字符的最大子字符串。*/
+    public int lengthOfLastWord(String s) {
+        String[] s1 = s.split(" ");
+        return s1[s1.length-1].length();
+    }
+    /*给定一个整数数组temperatures，
+    表示每天的温度，返回一个数组answer，其中answer[i]是指对于第 i 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用0 来代替。*/
+    public static int[] dailyTemperatures(int[] temperatures) {
+        if(temperatures.length <= 1) return new int [] {0};
+        int [] arr = new int [temperatures.length];
+        for (int i = 0; i<arr.length-1; i++){
+            int n = 1;
+            while(i+n <= arr.length-1 && temperatures[i] >= temperatures[i+n]){
+                n++;
+            }
+            if(i+n == arr.length)
+                n = 0;
+            arr[i] = n;
+        }
+        return arr;
     }
 }
