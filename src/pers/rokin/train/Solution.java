@@ -1772,4 +1772,33 @@ class Solution {
         dfs1(board, x, y + 1);
         dfs1(board, x, y - 1);
     }
+    /*给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。
+解集 不能 包含重复的子集。你可以按 任意顺序 返回解集。*/
+    /**
+     * 增量构造法：递归
+     */
+    public List<List<Integer>> subsets(int[] nums) {
+        //res.add(new ArrayList<>());
+        int[] record = new int[nums.length];
+        subSet(nums, record, 0);
+        return res;
+    }
+
+    List<List<Integer>> res = new ArrayList<>();
+
+    /**
+     * 用record记录选取的下标序号集合
+     */
+    private void subSet(int[] nums, int[] record, int cur) {
+        ArrayList<Integer> temp = new ArrayList<>(cur);
+        for (int i = 0; i < cur; i++) {
+            temp.add(nums[record[i]]);      //添加当前选取元素到集合
+        }
+        res.add(temp);
+        int start = cur != 0 ? record[cur - 1] + 1 : 0; //确定当前元素下标的最小可能值
+        for (int i = start; i < nums.length; i++) {
+            record[cur] = i;
+            subSet(nums, record, cur + 1);  //递归构造子集
+        }
+    }
 }
