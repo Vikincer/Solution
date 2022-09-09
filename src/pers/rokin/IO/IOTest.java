@@ -27,8 +27,12 @@ public class IOTest {
     private File const_file = null;
     private File const_fileChinese = null;
 
-    public static void main(String[] args) {
-        charTest01();
+    public static void main(String[] args) throws IOException {
+//        charTest01();
+//        zdu();
+//        zxie();
+//        zfdu();
+        zfxie();
     }
     public IOTest(){
         this.const_file = new File(const_filePath);
@@ -221,7 +225,42 @@ public class IOTest {
         }
     }
 
-
+    //简单字节流读操作
+    public static void zdu() throws IOException {
+        File file = new File("D:\\Hword\\java\\java_project\\javase\\src\\pers\\rokin\\IO\\test.txt");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        int n = 0;
+        while( (n = fileInputStream.read()) != -1){
+            System.out.print((char)n);
+        }
+        fileInputStream.close();
+    }
+    //简单字节流写操作
+    public static void zxie () throws IOException {
+        File file = new File("D:\\Hword\\java\\java_project\\javase\\src\\pers\\rokin\\IO\\test.txt");
+        FileOutputStream fileOutputStream = new FileOutputStream(file,true);
+        String s = "javajava";
+        fileOutputStream.write(s.getBytes());
+        fileOutputStream.close();
+    }
+    //简单字符流读操作
+    public static void zfdu() throws IOException {
+        File file = new File("D:\\Hword\\java\\java_project\\javase\\src\\pers\\rokin\\IO\\test.txt");
+        FileReader fileReader = new FileReader(file);
+        int read = 0;
+        while((read = fileReader.read()) != -1){
+            System.out.print((char)read);
+        }
+        fileReader.close();
+    }
+    //简单字符流写操作
+    public static void zfxie() throws IOException {
+        File file = new File("D:\\Hword\\java\\java_project\\javase\\src\\pers\\rokin\\IO\\test.txt");
+        FileWriter fileWriter = new FileWriter(file);
+        String s = "dddd";
+        fileWriter.write(s);
+        fileWriter.close();
+    }
 
 
 }
