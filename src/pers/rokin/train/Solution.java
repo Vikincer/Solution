@@ -1842,4 +1842,60 @@ class Solution {
             }
         }
     }
+    /*给你两个大小为 n x n 的二进制矩阵 mat 和 target 。现 以 90 度顺时针轮转 矩阵 mat 中的元素 若干次
+    ，如果能够使 mat 与target 一致，返回 true ；否则，返回 false 。*/
+    public boolean findRotation(int[][] mat, int[][] target) {
+        int n = mat.length;
+        boolean b1 = true,b2 = true,b3 = true,b4 = true;
+        for(int i = 0;i < n;i++){
+            for(int j = 0;j < n;j++){
+                //旋转90度
+                if(mat[n - j - 1][i] != target[i][j]){
+                    b1 = false;
+                }
+                //旋转180度
+                if (mat[n - i - 1][n - j - 1] != target[i][j]){
+                    b2 = false;
+                }
+                //旋转270度
+                if (mat[j][n- i- 1] != target[i][j]){
+                    b3 = false;
+                }
+                //旋转360度
+                if (mat[i][j] != target[i][j]){
+                    b4 = false;
+                }
+            }
+        }
+        return b1 || b2 || b3 || b4;
+    }
+
+    /*给定一个可包含重复数字的序列 nums ，按任意顺序 返回所有不重复的全排列。*/
+    boolean[] vis;
+
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<List<Integer>>();
+        List<Integer> perm = new ArrayList<Integer>();
+        vis = new boolean[nums.length];
+        Arrays.sort(nums);
+        backtrack(nums, ans, 0, perm);
+        return ans;
+    }
+
+    public void backtrack(int[] nums, List<List<Integer>> ans, int idx, List<Integer> perm) {
+        if (idx == nums.length) {
+            ans.add(new ArrayList<Integer>(perm));
+            return;
+        }
+        for (int i = 0; i < nums.length; ++i) {
+            if (vis[i] || (i > 0 && nums[i] == nums[i - 1] && !vis[i - 1])) {
+                continue;
+            }
+            perm.add(nums[i]);
+            vis[i] = true;
+            backtrack(nums, ans, idx + 1, perm);
+            vis[i] = false;
+            perm.remove(idx);
+        }
+    }
 }
